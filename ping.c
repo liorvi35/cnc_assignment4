@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
         double time = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_usec - start.tv_usec) / 1000.0; //save the time in mili-seconds
 
-        // 64 bytes from 8.8.8.8: icmp_seq=1 ttl=115 time=5.22 ms
+        //  64 bytes from 8.8.8.8: icmp_seq=1 ttl=115 time=5.22 ms
         printf("%d bytes from %s: icmp_seq=%d ittl=%d time=%.2f ms\n", len, argv[1], icmp.un.echo.sequence , 1 , time);
         sleep(1);
         i++;
