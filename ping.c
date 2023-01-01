@@ -6,12 +6,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netinet/ip_icmp.h>
-#include <errno.h>
-#include <netinet/ip.h>
-#include <sys/time.h> // gettimeofday()
-#include <sys/types.h>
+#include <time.h>
+#include <sys/time.h>
 
 #define BUF_SIZE 1024
+
+// command: make clean && make all && ./parta
 
 void calculate_checksum(struct icmphdr *icmp)
 {
@@ -35,10 +35,9 @@ int main(int argc, char *argv[])
     struct icmphdr icmp;
     char buf[BUF_SIZE];
     int len;
-    
-    char data[IP_MAXPACKET] = "This is the ping.\n";
-
-    int datalen = strlen(data) + 1;
+    struct timeval start , end; 
+    memset(&start , 0 , sizeof(start));
+    memset(&end , 0 , sizeof(end));
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s host\n", argv[0]);
@@ -58,21 +57,22 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    int i  = 0;
+
     while (1) {
         memset(&icmp, 0, sizeof(icmp));
         icmp.type = ICMP_ECHO;
         icmp.code = 0;
-        icmp.un.echo.sequence = 1;
+        icmp.un.echo.sequence = i;
         icmp.un.echo.id = getpid();
         calculate_checksum(&icmp);
 
-
-        int bytes_sent = sendto(sock, &icmp, sizeof(icmp), 0, (struct sockaddr *)&addr, sizeof(addr));
-        if (bytes_sent < 0) {
+        gettimeofday(&start , NULL);
+        
+        if (sendto(sock, &icmp, sizeof(icmp), 0, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
             perror("sendto");
             exit(EXIT_FAILURE);
         }
-        //printf("Successfuly sent one packet : ICMP HEADER : %d bytes, data length : %d , icmp header : %ld \n", bytes_sent, len, sizeof(icmp));
 
         len = recv(sock, buf, sizeof(buf), 0);
         if (len < 0) {
@@ -80,11 +80,13 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        //printf("Successfuly received one packet with %ld bytes : data length : %d , icmp header : %d , ip header : %d \n", len, datalen, ICMP_HDRLEN, IP4_HDRLEN);
+        gettimeofday(&end , NULL);
 
+        double time = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_usec - start.tv_usec) / 1000.0; //save the time in mili-seconds
+
+        // 64 bytes from 8.8.8.8: icmp_seq=1 ttl=115 time=5.22 ms
+        printf("%d bytes from %s: icmp_seq=%d ittl=%d time=%.2f ms\n", len, argv[1], icmp.un.echo.sequence , 1 , time);
         sleep(1);
+        i++;
     }
-
-    close(sock);
-    exit(EXIT_SUCCESS);
 }
