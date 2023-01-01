@@ -57,13 +57,19 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    int i  = 0;
+    // Set the Time-To-Live (TTL) value for the IP header
+    int ttl = 64;
+    if (setsockopt(sock, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
+        perror("setsockopt");
+        exit(EXIT_FAILURE);
+    }
+    int seq  = 0;
 
     while (1) {
         memset(&icmp, 0, sizeof(icmp));
         icmp.type = ICMP_ECHO;
         icmp.code = 0;
-        icmp.un.echo.sequence = i;
+        icmp.un.echo.sequence = seq;
         icmp.un.echo.id = getpid();
         calculate_checksum(&icmp);
 
@@ -85,8 +91,8 @@ int main(int argc, char *argv[])
         double time = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_usec - start.tv_usec) / 1000.0; //save the time in mili-seconds
 
         //  64 bytes from 8.8.8.8: icmp_seq=1 ttl=115 time=5.22 ms
-        printf("%d bytes from %s: icmp_seq=%d ittl=%d time=%.2f ms\n", len, argv[1], icmp.un.echo.sequence , 1 , time);
+        printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n", len, argv[1], icmp.un.echo.sequence , ttl, time);
         sleep(1);
-        i++;
+        seq++;
     }
 }
