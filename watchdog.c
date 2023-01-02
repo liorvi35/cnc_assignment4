@@ -14,23 +14,28 @@
 #include <errno.h>
 
 #define IP "127.0.0.1"
-#define PORT 3000
+#define PORT 3009
 #define CONNECTIONS 30
 
-
 int received_echo_reply = 0; // Flag to track whether we've received an ICMP-ECHO-REPLY
-
 
 void timer_callback() {
   if (!received_echo_reply) {
     printf("Timed out waiting for ICMP-ECHO-REPLY\n");
-    exit(EXIT_FAILURE);
+    exit(-1);
   }
 }
 
+
 int main()
 {
-    printf("hello partb\n");
+
+
+////////////////////////////////////    
+    struct sockaddr_in server_addr, client_addr;
+    memset(&server_addr, '\0', sizeof(server_addr));
+    memset(&client_addr, '\0', sizeof(client_addr));
+    socklen_t addr_size = 0;
 
     int server_sock = socket(AF_INET, SOCK_STREAM, 0); // creating the listener socket
     if(server_sock <= 0) // checking if socket created
@@ -42,7 +47,6 @@ int main()
     printf("socket created!\n");
 
     int er = 1;
-
     if(setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, &er, sizeof(er)) < 0) // // checking if ip and port are reusable
     {
         perror("setsockopt() failed");
@@ -50,8 +54,6 @@ int main()
         exit(errno);
     }
 
-    struct sockaddr_in server_addr;
-    
     server_addr.sin_family = AF_INET; //setting up socket's used protocol, port and ip
     server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = inet_addr(IP);
@@ -73,20 +75,21 @@ int main()
     printf("waiting for connection...\n");
 
     /* (2) getting connection from the sender */
-    struct sockaddr_in client_addr;
-    socklen_t addr_size = 0;
     addr_size = sizeof(client_addr);
-    int client_sock = 0;
-    client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_size); //accept a connection
+    int client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_size); //accept a connection
+    printf("the accept is: %d\n" , client_sock);
     if(client_sock <= 0) // checking if accepted
     {
-        perror("bind() failed");
+        perror("accept() failed");
         close(client_sock);
         close(server_sock);
         exit(errno);
     }
     printf("sender connected!\n");
 
+////////////////////////////////////
+
+    printf("start timer\n");
     struct itimerval timer;
     timer.it_value.tv_sec = 10;
     timer.it_value.tv_usec = 0;
@@ -101,14 +104,9 @@ int main()
         char buffer[BUFSIZ] = {0};
         recv(client_sock , buffer , BUFSIZ , 0);
         close(client_sock);
-        return EXIT_SUCCESS;
+        close(server_sock);
+        return 0;
     }
+
     return 0;
 }
-// 1. ping 
-// 2. open watchdog(start clock)
-// 3.recv ping 
-// 4. send watchdog OK
-// 5. check if in time 
-// 5.a. if yes - send ok and repeate 
-// 5.b. if no - send time out 
