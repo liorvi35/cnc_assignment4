@@ -1,10 +1,27 @@
-all: ping watchdog new_ping
-ping: ping.c
-	gcc ping.c -o parta
-watchdog: watchdog.c
-	gcc watchdog.c -o watchdog
-new_ping: new_ping.c
-	gcc new_ping.c -o partb
+CC = gcc
+FLAGS = -Wall -g
+
+.PHONY: all clean
+
+all: ping better_ping watchdog
+
+ping: ping.o
+	$(CC) $(FLAGS) -o parta ping.o
+
+better_ping: better_ping.o
+	$(CC) $(FLAGS) -o partb better_ping.o
+
+watchdog: watchdog.o
+	$(CC) $(FLAGS) -o watchdog watchdog.o
+
+ping.o: ping.c
+	$(CC) $(FLAGS) -c ping.c
+
+better_ping.o: better_ping.c
+	$(CC) $(FLAGS) -c better_ping.c
+
+watchdog.o: watchdog.c
+	$(CC) $(FLAGS) -c watchdog.c
 
 clean:
-	rm -f *.o parta watchdog partb
+	rm -f *.o parta partb watchdog
