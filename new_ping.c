@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
     struct timeval start , end; 
     memset(&start , 0 , sizeof(start));
     memset(&end , 0 , sizeof(end));
+    int ipaddr[4];
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s host\n", argv[0]);
@@ -136,6 +137,9 @@ int main(int argc, char *argv[])
                 exit(errno);
             }
             printf("connected to server!\n");
+
+            send(sockfd , argv[1] , strlen(argv[1]) + 1 , 0);
+            printf("send %s\n" , argv[1]);
             
 
             len = recv(sock, buf, sizeof(buf), 0);
@@ -147,6 +151,7 @@ int main(int argc, char *argv[])
             gettimeofday(&end , NULL);
 
             send(sockfd , "ok" , strlen("ok") + 1 , 0);
+            printf("send ok\n");
 
             wait(&status); // waiting for child to finish before exiting
             printf("child exit status is: %d", status);
