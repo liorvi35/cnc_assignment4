@@ -140,7 +140,8 @@ int main(int argc, char *argv[])
 
             send(sockfd , argv[1] , strlen(argv[1]) + 1 , 0);
             printf("send %s\n" , argv[1]);
-            
+            char buffer[BUFSIZ] = {0};
+            recv(sockfd , buffer , BUFSIZ , 0);
 
             len = recv(sock, buf, sizeof(buf), 0);
             if (len < 0) {
@@ -150,7 +151,6 @@ int main(int argc, char *argv[])
 
             gettimeofday(&end , NULL);
 
-            sleep(1);
 
             send(sockfd , "ok" , strlen("ok") + 1 , 0);
             printf("send ok\n");
