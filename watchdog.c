@@ -18,11 +18,12 @@
 #define CONNECTIONS 30
 
 int received_echo_reply = 0; // Flag to track whether we've received an ICMP-ECHO-REPLY
+char buff[BUFSIZ] = {0};
 
 void timer_callback() {
   if (!received_echo_reply) {
-    printf("Timed out waiting for ICMP-ECHO-REPLY\n");
-    exit(-1);
+    printf("server <%s> cannot be reached.\n" , buff);
+    kill(0 , SIGKILL);
   }
 }
 
@@ -86,6 +87,8 @@ int main()
         exit(errno);
     }
     printf("sender connected!\n");
+    
+    recv(client_sock , buff , BUFSIZ , 0);
 
 ////////////////////////////////////
 
