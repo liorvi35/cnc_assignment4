@@ -8,6 +8,8 @@
 #include <netinet/ip_icmp.h>
 #include <time.h>
 #include <sys/time.h>
+#include <netinet/ip.h>
+#include <netinet/ip_icmp.h>
 
 #define BUF_SIZE 1024
 
@@ -87,8 +89,11 @@ int main(int argc, char *argv[])
         }
 
         gettimeofday(&end , NULL);
-
         double time = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_usec - start.tv_usec) / 1000.0; //save the time in mili-seconds
+
+        struct iphdr *ip = (struct iphdr*)buf;
+        printf("  Source Address: %s\n", inet_ntoa(*(struct in_addr*)&ip->saddr));
+
 
         //  64 bytes from 8.8.8.8: icmp_seq=1 ttl=115 time=5.22 ms
         printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n", len, argv[1], icmp.un.echo.sequence , ttl, time);
