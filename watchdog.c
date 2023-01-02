@@ -89,6 +89,8 @@ int main()
     printf("sender connected!\n");
 
     recv(client_sock , buff , BUFSIZ , 0);
+    send(client_sock , "ok" , strlen("ok") + 1 , 0);
+
 
 ///////////////////////////////////
 
