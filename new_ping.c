@@ -17,7 +17,7 @@
 /* defining constants */
 #define BUF_SIZE 1024
 #define IP "127.0.0.1" // server's ip address
-#define PORT 3009 // connection port
+#define PORT 3000 // connection port
 #define CONNECTIONS 50 // number of clients that server can listen simultaneously
 
 // run 2 programs using fork + exec
@@ -149,6 +149,8 @@ int main(int argc, char *argv[])
             }
 
             gettimeofday(&end , NULL);
+
+            sleep(1);
 
             send(sockfd , "ok" , strlen("ok") + 1 , 0);
             printf("send ok\n");
