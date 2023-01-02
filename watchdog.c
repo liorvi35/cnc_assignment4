@@ -14,7 +14,7 @@
 #include <errno.h>
 
 #define IP "127.0.0.1"
-#define PORT 3009
+#define PORT 3000
 #define CONNECTIONS 30
 
 int received_echo_reply = 0; // Flag to track whether we've received an ICMP-ECHO-REPLY
@@ -87,10 +87,10 @@ int main()
         exit(errno);
     }
     printf("sender connected!\n");
-    
+
     recv(client_sock , buff , BUFSIZ , 0);
 
-////////////////////////////////////
+///////////////////////////////////
 
     printf("start timer\n");
     struct itimerval timer;
@@ -105,7 +105,9 @@ int main()
     while (1)
     {
         char buffer[BUFSIZ] = {0};
+        printf("before recv ping\n");
         recv(client_sock , buffer , BUFSIZ , 0);
+        printf("after recv ping\n");
         close(client_sock);
         close(server_sock);
         return 0;
