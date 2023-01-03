@@ -17,14 +17,16 @@
 #define ICMP_HDRLEN 8
 
 unsigned short checksum(void *b, int len)
-{	unsigned short *buf = b;
+{	
+    unsigned short *buf = b;
 	unsigned int sum=0;
-	unsigned short result;
+	unsigned short result = 0;
 
 	for ( sum = 0; len > 1; len -= 2 )
 		sum += *buf++;
 	if ( len == 1 )
 		sum += *(unsigned char*)buf;
+
 	sum = (sum >> 16) + (sum & 0xFFFF);
 	sum += (sum >> 16);
 	result = ~sum;
@@ -131,9 +133,9 @@ int main(int argc, char *argv[])
         
         ip = (struct iphdr*)buffer;
 
-        printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n", 
-            len, inet_ntoa(*(struct in_addr*)&ip->saddr), icmp.un.echo.sequence , ip->ttl, time);
-        
+        printf("%d bytes has been recv from %s to " , len, inet_ntoa(*(struct in_addr*)&ip->saddr));
+        printf("%s: icmp_seq=%d ttl=%d time=%.2f ms\n", inet_ntoa(*(struct in_addr*)&ip->daddr) , icmp.un.echo.sequence , ip->ttl, time);
+
         seq++;
 
         sleep(1);
