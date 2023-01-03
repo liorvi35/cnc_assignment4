@@ -60,19 +60,18 @@ int main(int argc, char *argv[])
     char packet[IP_MAXPACKET] = {0} , data[MSG_LEN] = {0};
     size_t data_len = strlen(data) + 1;
 
+    if (argc != 2) // checking that the user has specified an IP address 
+    {
+        printf("usage: ./partb <ip>\n");
+        exit(EXIT_FAILURE);
+    }
+	
     for (size_t i = 0; i < MSG_LEN - 1; i++) //the message we sent
     {
         data[i] = '1';
     }
     
     data[MSG_LEN - 1] = '\0';
-
-
-    if (argc != 2) // checking that the user has specified an IP address 
-    {
-        printf("usage: ./partb <ip>\n");
-        exit(EXIT_FAILURE);
-    }
 
     sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP); // creating an RAW socket for ICMP communication
     if (sock <= 0) // checking if socket created
