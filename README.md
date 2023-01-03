@@ -1,5 +1,6 @@
-# cnc_assignment4
-Communication and Computing - Assigment 4
+
+# Communication and Computing Course Assigment 4
+
 
 ## Authors
 
@@ -7,12 +8,10 @@ Communication and Computing - Assigment 4
 - [@Lior Vinman](https://github.com/liorvi35)
 
 ## General Description
-This is the second assignment in "Object-Oriented Programming" course at Ariel University.
-We were asked to implement the principles of the Observe design pattern.
-In this program we will implement the GroupAdmin class that implements the Sender interface which describes the sender of the updates (Observable).
-The GroupAdmin class contains the UndoableStringBuilder class and a members list that should receive updates on any changes.
-we also implement the ConcreteMember class that implements the Member interface which describes the recipient of the updates (Observer).
-The class contains a copy (copy sallow) of the UndoableStringBuilder repository. 
+This is assignment 4 in "Communication and Computing" Course course at Ariel University.
+We were asked to implement a ping program.
+- in the first part we were ask to implement a simple ping: <br>
+  The user will run the program (ping.c) with the given ip, and we need to ping it in a loop until the user stop it c "kill" the program.  
  
 
 
