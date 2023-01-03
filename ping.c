@@ -11,25 +11,24 @@
 #include <netinet/ip_icmp.h>
 #include <time.h>
 #include<errno.h>
-#include <netinet/ip.h>
-#include <netinet/ip_icmp.h>
 #include <errno.h>
 
-void calculate_checksum(struct icmphdr *icmp)
-{
-    unsigned long sum = 0;
-    unsigned short *ptr = (unsigned short *)icmp, chksum = 0;
+#define MSG_LEN 32
+#define ICMP_HDRLEN 8
 
-    for (int i = 0; i < sizeof(struct icmphdr) / 2; i++)
-    {
-        sum += *ptr++;
-    }
+unsigned short checksum(void *b, int len)
+{	unsigned short *buf = b;
+	unsigned int sum=0;
+	unsigned short result;
 
-    sum = (sum >> 16) + (sum & 0xffff);
-    sum += (sum >> 16);
-    chksum = ~sum;
-    
-    icmp->checksum = chksum;
+	for ( sum = 0; len > 1; len -= 2 )
+		sum += *buf++;
+	if ( len == 1 )
+		sum += *(unsigned char*)buf;
+	sum = (sum >> 16) + (sum & 0xFFFF);
+	sum += (sum >> 16);
+	result = ~sum;
+	return result;
 }
 
 int main(int argc, char *argv[])
@@ -42,7 +41,8 @@ int main(int argc, char *argv[])
     struct icmphdr icmp;
     memset(&icmp, 0, sizeof(icmp));
 
-    char buffer[BUFSIZ] = {'\0'};
+    char buffer[IP_MAXPACKET] = {'\0'};
+    size_t buffer_len = sizeof(buffer);
 
     struct timeval start , end; 
     memset(&start , 0 , sizeof(start));
@@ -54,6 +54,17 @@ int main(int argc, char *argv[])
 
     struct iphdr *ip;
     memset(&ip , 0 , sizeof(ip));
+
+    char packet[IP_MAXPACKET] = {0} , data[MSG_LEN] = {0};
+    size_t data_len = strlen(data) + 1;
+
+    for (size_t i = 0; i < MSG_LEN - 1; i++) //the message we sent
+    {
+        data[i] = '1';
+    }
+    
+    data[MSG_LEN - 1] = '\0';
+
 
     if (argc != 2) // checking that the user has specified an IP address 
     {
@@ -78,16 +89,20 @@ int main(int argc, char *argv[])
 
     while (1)
     {
-        memset(&icmp, 0, sizeof(icmp)); // setting up the struct for ICMP communication
+        memset(&icmp, 0, sizeof(icmp)); // setting up the struct and packet for ICMP communication
+        memset(&packet , 0 , sizeof(packet));
         icmp.type = ICMP_ECHO;
-        icmp.code = 0;
         icmp.un.echo.sequence = seq;
-        icmp.un.echo.id = getpid();
-        calculate_checksum(&icmp);
+        icmp.checksum = 0;
+
+        memcpy((packet), &icmp, ICMP_HDRLEN);
+        memcpy(packet + ICMP_HDRLEN, data, data_len);
+
+        icmp.checksum = checksum(&packet, sizeof(packet));
+        memcpy((packet), &icmp, ICMP_HDRLEN);
 
         gettimeofday(&start , NULL); // starting counting ping-time
-
-        if (sendto(sock, &icmp, sizeof(icmp), 0, (struct sockaddr*)&addr_ping, sizeof(addr_ping)) < 0) // sending ICMP-ECHO-REQUEST
+        if (sendto(sock, &packet, ICMP_HDRLEN + data_len, 0, (struct sockaddr*)&addr_ping, sizeof(addr_ping)) < 0) // sending ICMP-ECHO-REQUEST
         {
             perror("sendto() failed");
             close(sock);
@@ -95,12 +110,19 @@ int main(int argc, char *argv[])
         }
 
         addr_len = sizeof(addr_ping); // receiving ICMP-ECHO-REPLEY
-        len = recvfrom(sock, buffer, BUFSIZ, 0, (struct sockaddr*)&addr_ping, &addr_len);
-        if (len < 0) 
+        bzero(buffer, IP_MAXPACKET);
+        while ((len = recvfrom(sock, buffer, buffer_len, 0, (struct sockaddr *)&addr_ping, &addr_len)))
         {
-            perror("recvfrom() failed");
-            close(sock);
-            exit(errno);
+            if (len == -1)
+            {
+                perror("recvfrom() failed");
+                close(sock);
+                exit(errno);
+            }
+
+            else if (len > 0){
+                break;
+            }
         }
 
         gettimeofday(&end , NULL); // ending counting ping-time
