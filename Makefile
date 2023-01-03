@@ -6,10 +6,10 @@ FLAGS = -Wall -g
 all: ping better_ping watchdog
 
 ping: ping.o
-	$(CC) $(FLAGS) -o parta ping.o
+	$(CC) $(FLAGS) -o PartA ping.o
 
 better_ping: better_ping.o
-	$(CC) $(FLAGS) -o partb better_ping.o
+	$(CC) $(FLAGS) -o PartB better_ping.o
 
 watchdog: watchdog.o
 	$(CC) $(FLAGS) -o watchdog watchdog.o
@@ -24,4 +24,4 @@ watchdog.o: watchdog.c
 	$(CC) $(FLAGS) -c watchdog.c
 
 clean:
-	rm -f *.o parta partb watchdog
+	rm -f *.o PartA PartB watchdog
