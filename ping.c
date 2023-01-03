@@ -112,18 +112,12 @@ int main(int argc, char *argv[])
 
         addr_len = sizeof(addr_ping); // receiving ICMP-ECHO-REPLEY
         bzero(buffer, IP_MAXPACKET);
-        while ((len = recvfrom(sock, buffer, buffer_len, 0, (struct sockaddr *)&addr_ping, &addr_len)))
+        len = recvfrom(sock, buffer, buffer_len, 0, (struct sockaddr *)&addr_ping, &addr_len);
+        if (len == -1)
         {
-            if (len == -1)
-            {
-                perror("recvfrom() failed");
-                close(sock);
-                exit(errno);
-            }
-
-            else if (len > 0){
-                break;
-            }
+            perror("recvfrom() failed");
+            close(sock);
+            exit(errno);
         }
 
         gettimeofday(&end , NULL); // ending counting ping-time
