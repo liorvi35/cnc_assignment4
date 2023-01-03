@@ -69,5 +69,5 @@ make clean
 ![pic_tcp](https://user-images.githubusercontent.com/119599940/210381373-dadc8221-931d-4c2a-a6a7-47b918e61bef.png)
 
 ## 🛠 Skills
-C Programing 
+C Programing , socket programing
 
