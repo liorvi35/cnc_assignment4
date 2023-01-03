@@ -65,10 +65,10 @@ int main(int argc, char *argv[])
         printf("usage: ./partb <ip>\n");
         exit(EXIT_FAILURE);
     }
-	
+
     for (size_t i = 0; i < MSG_LEN - 1; i++) //the message we sent
     {
-        data[i] = '1';
+        data[i] = '0';
     }
     
     data[MSG_LEN - 1] = '\0';
