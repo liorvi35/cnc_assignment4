@@ -4,7 +4,7 @@ Communication and Computing - Assigment 4
 ## Authors
 
 - [@Yoad Tamar](https://github.com/YoadTamar)
-- [@Ron Shuster](https://github.com/shusteron)
+- [@Lior Vinman](https://github.com/liorvi35)
 
 ## General Description
 This is the second assignment in "Object-Oriented Programming" course at Ariel University.
