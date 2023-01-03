@@ -42,26 +42,32 @@ sudo ./PartA <ip>
 ```bash
 sudo ./PartB <ip>
 ```
+#### To clean the files
+```bash
+make clean
+```
+## prints examples:
 
-## Tests
+#### part A example:
+![partA_prints](https://user-images.githubusercontent.com/119599940/210381863-273b331e-ed84-4287-a90d-771ad68fc9a2.png)
 
-The test made with JUnit 5.
-We test two thing - the memory and the correctness of the classes.
-
-We test the memory with `JvmUtilities` and `pom.xml` which implemets the `JOL` interface.
-
-We test the classes `ConcreteMember` and `GroupAdmin` methods.
-For each method we create his own test.
-
-#### For example - memory:
-
-![testmemory_photo](https://user-images.githubusercontent.com/119599940/210111443-7bb62884-1cd0-432f-ab3b-3b9f9a05dc52.png)
+#### part B example:
+![partB_prints](https://user-images.githubusercontent.com/119599940/210381982-456d747e-f566-4a3b-9a3d-57fdc65de14b.png)
 
 
-#### For example - method:
 
-![test_photo](https://user-images.githubusercontent.com/119599940/210111176-5a90fa9a-ef4c-488b-9dfc-a1d4f8470abd.png)
+## wireshark examples
+
+
+#### For example - ping:
+
+![ping_pic](https://user-images.githubusercontent.com/119599940/210381265-9a3c9d51-830a-4d25-a948-2111cb9cc27a.png)
+
+
+#### For example - tcp:
+
+![pic_tcp](https://user-images.githubusercontent.com/119599940/210381373-dadc8221-931d-4c2a-a6a7-47b918e61bef.png)
 
 ## 🛠 Skills
-C , 
+C Programing 
 
